@@ -1,16 +1,32 @@
-import css from './Modal.module.css';
-import propTypes from 'prop-types';
+import { Component } from 'react';
+import style from '../Modal/Modal.module.css';
 
-export const Modal = ({ src, alt, handleClose }) => (
-  <div className={css.Overlay} onClick={handleClose}>
-    <div className={css.Modal}>
-      <img src={src} alt={alt} />
-    </div>
-  </div>
-);
+export class Modal extends Component {
+  componentDidMount = () => {
+    window.addEventListener('keydown', this.handleKeyDown);
+  };
 
-Modal.propTypes = {
-  src: propTypes.string.isRequired,
-  alt: propTypes.string.isRequired,
-  handleClose: propTypes.func.isRequired,
-};
+  componentWillUnmount = () => {
+    window.removeEventListener('keydown', this.handleKeyDown);
+  };
+
+  handleKeyDown = e => {
+    if (e.code === 'Escape') {
+      this.props.closeModal();
+    }
+  };
+
+  handleBackdrop = e => {
+    if (e.currentTarget === e.target) {
+      this.props.closeModal();
+    }
+  };
+
+  render() {
+    return (
+      <div className={style.overlay} onClick={this.handleBackdrop}>
+        <div className={style.modal}>{this.props.children}</div>
+      </div>
+    );
+  }
+}
